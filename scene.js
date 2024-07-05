@@ -62,3 +62,86 @@ function drawHouse(x, y, width, height) {
 }
 
 
+function drawAnimal(x, y, size) {
+  const animalLines = [];
+  const radius = size / 2;
+  
+ 
+  animalLines.push([
+    [x - radius, y],
+    [x, y + radius],
+    [x + radius, y],
+    [x, y - radius],
+    [x - radius, y]
+  ]);
+  
+  return animalLines;
+}
+
+
+function isOccupied(x, y, size, occupiedAreas) {
+  for (let area of occupiedAreas) {
+    const [ax, ay, asize] = area;
+    if (Math.abs(ax - x) < (asize / 2 + size / 2) && Math.abs(ay - y) < (asize / 2 + size / 2)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+const finalLines = [];
+const occupiedAreas = [];
+
+
+const numTrees = Math.floor(Math.random() * 11) + 10;
+const numHouses = Math.floor(Math.random() * 3) + 1;
+const numAnimals = Math.floor(Math.random() * 5) + 2;
+
+
+for (let i = 0; i < numTrees; i++) {
+  let x, y, treeHeight;
+  do {
+    x = Math.floor(Math.random() * (width - 10)) + 5;
+    y = Math.floor(Math.random() * (height - 50)) + 5;
+    treeHeight = Math.floor(Math.random() * 30) + 10;
+  } while (isOccupied(x, y, treeHeight, occupiedAreas));
+  
+  occupiedAreas.push([x, y, treeHeight]);
+  const treeLines = drawTree(x, y, treeHeight);
+  treeLines.forEach(line => finalLines.push(line));
+}
+
+
+for (let i = 0; i < numHouses; i++) {
+  let x, y, houseWidth, houseHeight;
+  do {
+    x = Math.floor(Math.random() * (width - 20)) + 10;
+    y = Math.floor(Math.random() * (height - 60)) + 5;
+    houseWidth = Math.floor(Math.random() * 15) + 10;
+    houseHeight = Math.floor(Math.random() * 10) + 10;
+  } while (isOccupied(x, y, houseWidth, occupiedAreas));
+  
+  occupiedAreas.push([x, y, houseWidth]);
+  const houseLines = drawHouse(x, y, houseWidth, houseHeight);
+  houseLines.forEach(line => finalLines.push(line));
+}
+
+
+for (let i = 0; i < numAnimals; i++) {
+  let x, y, animalSize;
+  do {
+    x = Math.floor(Math.random() * (width - 5)) + 2;
+    y = Math.floor(Math.random() * (height - 10)) + 2;
+    animalSize = Math.floor(Math.random() * 5) + 3;
+  } while (isOccupied(x, y, animalSize, occupiedAreas));
+  
+  occupiedAreas.push([x, y, animalSize]);
+  const animalLines = drawAnimal(x, y, animalSize);
+  animalLines.forEach(line => finalLines.push(line));
+}
+
+
+drawLines(finalLines);
+ 
+
